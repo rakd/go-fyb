@@ -26,10 +26,10 @@ const (
 
 func main() {
 	// fyb client
-	fyb := fyb.New(API_KEY, API_SECRET)
+	client := fyb.New(fyb.APIBaseURLForSGD, API_KEY, API_SECRET)
 
 	// Get tickers
-  tickers, err := fyb.GetTickers()
+	tickers, err := client.GetTickers()
 	fmt.Println(err, tickers)
 }
 ~~~

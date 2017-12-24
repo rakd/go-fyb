@@ -6,7 +6,9 @@ go-fyb is an implementation of the fybsg.com & fybse.se API in Golang.
 Based off of https://github.com/rakd/go-fyb/
 
 ## Import
-	import "github.com/rakd/go-fyb"
+```
+import "github.com/rakd/go-fyb"
+```
 
 ## Usage
 ~~~ go

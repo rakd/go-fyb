@@ -3,7 +3,7 @@ go-fyb
 
 go-fyb is an implementation of the fybsg.com & fybse.se API in Golang.
 
-Based off of https://github.com/rakd/go-fyb/
+Based off of https://github.com/toorop/go-bittrex/
 
 ## Import
 ```

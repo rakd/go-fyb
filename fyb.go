@@ -42,12 +42,13 @@ type Fyb struct {
 }
 
 // GetOrderBook ..
-func (b *Fyb) GetOrderBook() (orderbook OrderBook, err error) {
-	r, err := b.client.do("GET", "orderbook.json", nil, false)
+func (b *Fyb) GetOrderBook() (orderbook OrderBook, r []byte, err error) {
+	r, err = b.client.do("GET", "orderbook.json", nil, false)
 	if err != nil {
 		//log.Print(err)
 		return
 	}
+
 	js, err := simplejson.NewJson(r)
 	if err != nil {
 		return
@@ -84,8 +85,8 @@ func (b *Fyb) GetOrderBook() (orderbook OrderBook, err error) {
 }
 
 // GetTicker ...
-func (b *Fyb) GetTicker() (ticker Ticker, err error) {
-	r, err := b.client.do("GET", "tickerdetailed.json", nil, false)
+func (b *Fyb) GetTicker() (ticker Ticker, r []byte, err error) {
+	r, err = b.client.do("GET", "tickerdetailed.json", nil, false)
 	if err != nil {
 		return
 	}
@@ -98,8 +99,8 @@ func (b *Fyb) GetTicker() (ticker Ticker, err error) {
 // GetTradeHistory ...
 // tid ()= Trade ID) to begin trade history from.
 // You should cache trade history and query only new trades by passing in last known trade id
-func (b *Fyb) GetTradeHistory(tid int64) (trades Trades, err error) {
-	r, err := b.client.do("GET", fmt.Sprintf("trades.json?since=%d", tid), nil, false)
+func (b *Fyb) GetTradeHistory(tid int64) (trades Trades, r []byte, err error) {
+	r, err = b.client.do("GET", fmt.Sprintf("trades.json?since=%d", tid), nil, false)
 	if err != nil {
 		return
 	}
@@ -110,8 +111,8 @@ func (b *Fyb) GetTradeHistory(tid int64) (trades Trades, err error) {
 }
 
 // APITokenTest private API
-func (b *Fyb) APITokenTest() (res TestResponse, err error) {
-	r, err := b.client.do("POST", fmt.Sprintf("test"), nil, true)
+func (b *Fyb) APITokenTest() (res TestResponse, r []byte, err error) {
+	r, err = b.client.do("POST", fmt.Sprintf("test"), nil, true)
 	if err != nil {
 		return
 	}
@@ -133,8 +134,8 @@ func (b *Fyb) APITokenTest() (res TestResponse, err error) {
 }
 
 // GetAccountInfo ..
-func (b *Fyb) GetAccountInfo() (res AccountInfoResponse, err error) {
-	r, err := b.client.do("POST", fmt.Sprintf("getaccinfo"), nil, true)
+func (b *Fyb) GetAccountInfo() (res AccountInfoResponse, r []byte, err error) {
+	r, err = b.client.do("POST", fmt.Sprintf("getaccinfo"), nil, true)
 	if err != nil {
 		return
 	}
@@ -161,8 +162,8 @@ func (b *Fyb) GetAccountInfo() (res AccountInfoResponse, err error) {
 }
 
 // GetPendingOrders ..
-func (b *Fyb) GetPendingOrders() (res PendingOrderResponse, err error) {
-	r, err := b.client.do("POST", fmt.Sprintf("getpendingorders"), nil, true)
+func (b *Fyb) GetPendingOrders() (res PendingOrderResponse, r []byte, err error) {
+	r, err = b.client.do("POST", fmt.Sprintf("getpendingorders"), nil, true)
 	if err != nil {
 		return
 	}
@@ -185,10 +186,10 @@ func (b *Fyb) GetPendingOrders() (res PendingOrderResponse, err error) {
 
 // GetOrderHistory ..
 // limit int64, Number of Order History Items to return : Number
-func (b *Fyb) GetOrderHistory(limit int64) (res OrderHistoryResponse, err error) {
+func (b *Fyb) GetOrderHistory(limit int64) (res OrderHistoryResponse, r []byte, err error) {
 	payload := map[string]string{}
 	payload["limit"] = fmt.Sprintf("%d", limit)
-	r, err := b.client.do("POST", fmt.Sprintf("getorderhistory"), payload, true)
+	r, err = b.client.do("POST", fmt.Sprintf("getorderhistory"), payload, true)
 	if err != nil {
 
 		return
@@ -216,11 +217,11 @@ func (b *Fyb) GetOrderHistory(limit int64) (res OrderHistoryResponse, err error)
 
 // CancelPendingOrder ..
 // orderNo, Ticket Number of Pending Order to cancel. :number
-func (b *Fyb) CancelPendingOrder(orderNo int64) (res CancelPendingOrderResponse, err error) {
+func (b *Fyb) CancelPendingOrder(orderNo int64) (res CancelPendingOrderResponse, r []byte, err error) {
 	payload := map[string]string{}
 	payload["orderNo"] = fmt.Sprintf("%d", orderNo)
 
-	r, err := b.client.do("POST", fmt.Sprintf("cancelpendingorder"), payload, true)
+	r, err = b.client.do("POST", fmt.Sprintf("cancelpendingorder"), payload, true)
 	if err != nil {
 		return
 	}
@@ -247,7 +248,7 @@ func (b *Fyb) CancelPendingOrder(orderNo int64) (res CancelPendingOrderResponse,
 // qty float64, Quantity of bitcoins, Number
 // price , Price to place order at , Number
 // type , Whether it is a buy or sell order. Must be either 'B' or 'S' only. ,Char
-func (b *Fyb) PlaceOrder(orderType string, price, qty float64) (res PlaceOrderResponse, err error) {
+func (b *Fyb) PlaceOrder(orderType string, price, qty float64) (res PlaceOrderResponse, r []byte, err error) {
 
 	orderType = strings.ToUpper(orderType)
 	payload := map[string]string{}
@@ -262,7 +263,7 @@ func (b *Fyb) PlaceOrder(orderType string, price, qty float64) (res PlaceOrderRe
 	payload["price"] = fmt.Sprintf("%f", price)
 	payload["qty"] = fmt.Sprintf("%f", qty)
 
-	r, err := b.client.do("POST", fmt.Sprintf("placeorder"), payload, true)
+	r, err = b.client.do("POST", fmt.Sprintf("placeorder"), payload, true)
 	if err != nil {
 		return
 	}
@@ -287,7 +288,7 @@ func (b *Fyb) PlaceOrder(orderType string, price, qty float64) (res PlaceOrderRe
 // amount Amount of bitcoins/dollars to withdraw: Number
 // destination Bitcoin address to withdraw to, leave blank for XFERS: String
 // type BTC/XFERS (XFERS only for FYB-SG) // Char
-func (b *Fyb) Withdraw(amount float64, destination string, destinationType string) (res WithdrawResponse, err error) {
+func (b *Fyb) Withdraw(amount float64, destination string, destinationType string) (res WithdrawResponse, r []byte, err error) {
 	destinationType = strings.ToUpper(destinationType)
 	payload := map[string]string{}
 	payload["destination"] = strings.Trim(destination, "\r\n ")
@@ -302,7 +303,7 @@ func (b *Fyb) Withdraw(amount float64, destination string, destinationType strin
 		return
 	}
 
-	r, err := b.client.do("POST", fmt.Sprintf("withdraw"), nil, true)
+	r, err = b.client.do("POST", fmt.Sprintf("withdraw"), nil, true)
 	if err != nil {
 		return
 	}

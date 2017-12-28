@@ -8,14 +8,37 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+/*
+func TestPlaceOrder(t *testing.T) {
+	token := os.Getenv("FYBSG_KEY")
+	secret := os.Getenv("FYBSG_SECRET")
+	api := New(APIBaseURLForTest, token, secret)
+	ret, body, err := api.PlaceOrder("BUY", 1.2, 1.1)
+	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
+	log.Printf("ret.Error:%d", ret.Error)
+	log.Printf("ret.PendingOID:%s", ret.PendingOID)
+	log.Printf("ret.Msg:%s", ret.Msg)
+
+	ret2, body, err2 := api.PlaceOrder("SELL", 999999.99, 0.01)
+	require.NoError(t, err2, nil)
+	log.Printf("body:%s", string(body))
+	log.Printf("ret2.Error:%d", ret2.Error)
+	log.Printf("ret2.PendingOID:%s", ret2.PendingOID)
+	log.Printf("ret2.Msg:%s", ret2.Msg)
+
+	return
+}
+*/
 func TestPrivateAPITest(t *testing.T) {
 
 	token := os.Getenv("FYBSG_KEY")
 	secret := os.Getenv("FYBSG_SECRET")
 	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.APITokenTest()
+	ret, body, err := api.APITokenTest()
 	log.Print(err)
 
+	log.Printf("body:%s", string(body))
 	require.NoError(t, err, nil)
 	require.Equal(t, "success", ret.Msg, nil)
 	return
@@ -24,9 +47,10 @@ func TestPrivateAPITest(t *testing.T) {
 func TestCancelPendingOrdersFail(t *testing.T) {
 	log.Print("TestCancelPendingOrdersFail")
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
-	ret, err := api.GetPendingOrders()
+	ret, body, err := api.GetPendingOrders()
 
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 
@@ -36,9 +60,9 @@ func TestCancelPendingOrdersFail(t *testing.T) {
 func TestWithdrawFail(t *testing.T) {
 	log.Print("TestWithdrawFail")
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
-	ret, err := api.Withdraw(0.01, "aaa", "BTC")
-
+	ret, body, err := api.Withdraw(0.01, "aaa", "BTC")
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 
@@ -47,9 +71,10 @@ func TestWithdrawFail(t *testing.T) {
 func TestPlaceOrderFail(t *testing.T) {
 	log.Print("TestPlaceOrderFail")
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
-	ret, err := api.PlaceOrder("BUY", 1.2, 1.1)
+	ret, body, err := api.PlaceOrder("BUY", 1.2, 1.1)
 
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 
@@ -60,9 +85,10 @@ func TestGetPendingOrdersFail(t *testing.T) {
 	log.Print("TestGetPendingOrdersFail")
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
 
-	ret, err := api.GetPendingOrders()
+	ret, body, err := api.GetPendingOrders()
 
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 
@@ -71,8 +97,9 @@ func TestGetPendingOrdersFail(t *testing.T) {
 func TestGetAccountInfoFail(t *testing.T) {
 
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
-	ret, err := api.GetAccountInfo()
+	ret, body, err := api.GetAccountInfo()
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 	return
@@ -81,8 +108,9 @@ func TestGetAccountInfoFail(t *testing.T) {
 func TestPrivateAPIFail(t *testing.T) {
 
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
-	ret, err := api.APITokenTest()
+	ret, body, err := api.APITokenTest()
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 	return
@@ -92,8 +120,9 @@ func TestGetOrderHistoryFail(t *testing.T) {
 	log.Printf("TestGetOrderHistoryFail")
 
 	api := New(APIBaseURLForTest, "wrongtoken", "wrongsecret")
-	ret, err := api.GetOrderHistory(5)
+	ret, body, err := api.GetOrderHistory(5)
 	require.Error(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("err:%v", err)
 	log.Printf("ret.Msg:%s", ret.Msg)
 
@@ -103,9 +132,10 @@ func TestGetOrderHistoryFail(t *testing.T) {
 func TestOrderBook(t *testing.T) {
 
 	api := New(APIBaseURLForTest, "", "")
-	orderbook, err := api.GetOrderBook()
+	orderbook, body, err := api.GetOrderBook()
 
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 
 	for _, ask := range orderbook.Asks {
 		log.Printf("ask: price=%v, amount=%v", ask.Price, ask.Amount)
@@ -121,9 +151,10 @@ func TestGetTicker(t *testing.T) {
 
 	api := New(APIBaseURLForTest, "", "")
 
-	ticker, err := api.GetTicker()
+	ticker, body, err := api.GetTicker()
 
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("ticker.Ask:%v", ticker.Ask)
 	log.Printf("ticker.Bid:%v", ticker.Bid)
 	log.Printf("ticker.Last:%v", ticker.Last)
@@ -135,8 +166,9 @@ func TestGetTicker(t *testing.T) {
 func TestGetTradeHistoryTestTrades(t *testing.T) {
 
 	api := New(APIBaseURLForTest, "", "")
-	tradeHistory, err := api.GetTradeHistory(2218610)
+	tradeHistory, body, err := api.GetTradeHistory(2218610)
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 	for _, trade := range tradeHistory {
 		log.Printf("trade.Date:%d", trade.Date)
 		log.Printf("trade.TID:%d", trade.TID)
@@ -152,8 +184,9 @@ func TestGetAccountInfo(t *testing.T) {
 	token := os.Getenv("FYBSG_KEY")
 	secret := os.Getenv("FYBSG_SECRET")
 	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.GetAccountInfo()
+	ret, body, err := api.GetAccountInfo()
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 	//require.Equal(t, "success", ret.Msg, nil)
 	log.Printf("ret.AccNo:%v", ret.AccNo)
 	log.Printf("ret.BtcBal:%v", ret.BtcBal)
@@ -169,9 +202,10 @@ func TestGetOrderHistory(t *testing.T) {
 	token := os.Getenv("FYBSG_KEY")
 	secret := os.Getenv("FYBSG_SECRET")
 	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.GetOrderHistory(5)
+	ret, body, err := api.GetOrderHistory(5)
 
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 
 	for _, order := range ret.Orders {
 		log.Printf("order.DateExecuted:%d", order.DateExecuted)
@@ -188,8 +222,9 @@ func TestGetPendingOrders(t *testing.T) {
 	token := os.Getenv("FYBSG_KEY")
 	secret := os.Getenv("FYBSG_SECRET")
 	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.GetPendingOrders()
+	ret, body, err := api.GetPendingOrders()
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("ret.Error:%d", ret.Error)
 	for _, order := range ret.Orders {
 		log.Printf("======")
@@ -204,31 +239,13 @@ func TestGetPendingOrders(t *testing.T) {
 	return
 }
 
-func TestPlaceOrder(t *testing.T) {
-	token := os.Getenv("FYBSG_KEY")
-	secret := os.Getenv("FYBSG_SECRET")
-	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.PlaceOrder("BUY", 1.2, 1.1)
-	require.NoError(t, err, nil)
-	log.Printf("ret.Error:%d", ret.Error)
-	log.Printf("ret.PendingOID:%s", ret.PendingOID)
-	log.Printf("ret.Msg:%s", ret.Msg)
-
-	ret2, err2 := api.PlaceOrder("SELL", 999999.99, 0.01)
-	require.NoError(t, err2, nil)
-	log.Printf("ret2.Error:%d", ret2.Error)
-	log.Printf("ret2.PendingOID:%s", ret2.PendingOID)
-	log.Printf("ret2.Msg:%s", ret2.Msg)
-
-	return
-}
-
 func TestCancelPendingOrders(t *testing.T) {
 	token := os.Getenv("FYBSG_KEY")
 	secret := os.Getenv("FYBSG_SECRET")
 	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.GetPendingOrders()
+	ret, body, err := api.GetPendingOrders()
 	require.NoError(t, err, nil)
+	log.Printf("body:%s", string(body))
 	log.Printf("ret.Error:%d", ret.Error)
 	for _, order := range ret.Orders {
 		log.Printf("======")
@@ -239,7 +256,8 @@ func TestCancelPendingOrders(t *testing.T) {
 		log.Printf("order.Type:%s", order.Type)
 		log.Printf("CancelPendingOrder(%d)", order.Ticket)
 
-		ret2, err2 := api.CancelPendingOrder(order.Ticket)
+		ret2, body, err2 := api.CancelPendingOrder(order.Ticket)
+		log.Printf("body:%s", string(body))
 
 		require.NoError(t, err2, nil)
 		log.Printf("ret2.Error:%d", ret2.Error)
@@ -254,8 +272,9 @@ func TestWithdraw(t *testing.T) {
 	token := os.Getenv("FYBSG_KEY")
 	secret := os.Getenv("FYBSG_SECRET")
 	api := New(APIBaseURLForTest, token, secret)
-	ret, err := api.Withdraw(0.01, "aaa", "BTC")
+	ret, body, err := api.Withdraw(0.01, "aaa", "BTC")
 	log.Printf("err=%v", err)
+	log.Printf("body:%s",string(body))
 	require.NoError(t, err, nil)
 	log.Printf("ret:%v", ret)
 	log.Printf("ret.Error:%v", ret.Error)

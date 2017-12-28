@@ -176,7 +176,6 @@ func (c *Client) makeReq(method, resource string, payload map[string]string, aut
 	resp, err := c.doTimeoutRequest(connectTimer, req)
 
 	if err != nil {
-		log.Printf("123err=%v", err)
 		respCh <- body
 		errCh <- err
 		return
